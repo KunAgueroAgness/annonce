@@ -20,8 +20,6 @@ const cityOptions = computed(() => {
 const onCitySelected = (city) => {
   if (city) {
     selectedCity.value = city;
-    console.log('Выбран город:', city.label);
-    console.log('Ключ города:', city.value);
   }
 };
 const toggleRightDrawer = () => {
@@ -31,17 +29,19 @@ const toggleRightDrawer = () => {
 </script>
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header class="header-bg q-py-sm header-padding d-flex align-center justyfy-between">
+    <q-header class="header-bg q-py-sm header-style header-padding d-flex align-center justify-between">
       <q-toolbar :bordered="false" :elevated="false" :inset="false" :dense="true"
-        class="text-black d-flex align-center justyfy-between">
-        <div class="q-toolbar-left d-flex align-center justyfy-between">
+        class="text-black d-flex align-center justify-between">
+        <div class="d-flex align-center justify-between">
           <q-toolbar-title class="q-toolbar__title-header d-flex align-center">
-            Annoncé
+            <NuxtLink to="/products">
+              Annoncé
+            </NuxtLink>
           </q-toolbar-title>
           <q-btn color="grey" :glossy="false" :rounded="true" :noCaps="true" :replace="true" text-color="black"
             unelevated icon="eva-grid-outline" label="Все категории" class="btn-all-category" />
         </div>
-        <div class="q-toolbar-right d-flex align-center justyfy-between">
+        <div class="d-flex align-center justify-between">
           <q-select class="header-select" :borderless="true" v-model="selectedCity" :options="cityOptions"
             @update:model-label="onCitySelected" :loading="isLoading" label="Выберите город">
             <template v-slot:prepend>
@@ -59,11 +59,11 @@ const toggleRightDrawer = () => {
               </q-card-actions>
             </q-card>
           </q-dialog>
-          <q-btn @click="drawer = !drawer" dense icon="menu" color="grey" textColor="black" class="drawer-btn">
+            <q-btn @click="drawer = !drawer" dense icon="menu" color="grey" textColor="black" class="drawer-btn">
             <q-avatar
             class="draw-avatar"
             >
-            <img src="./../public/avatar.png" alt="">
+            <img :draggable="false" src="./../public/avatar.png" alt="">
             </q-avatar>
           </q-btn>
         </div>
@@ -77,20 +77,21 @@ const toggleRightDrawer = () => {
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-footer class="footer-style text-black">
-      <q-toolbar>
-        <q-toolbar-title>
-          <div>© Annonce 2023</div>
-        </q-toolbar-title>
-      </q-toolbar>
+    <q-footer class="footer-style d-flex"
+    >
+      <div><NuxtLink class="line-heigh-24 footer-main-link text-black" to="/products">© Annonce 2023</NuxtLink></div>
+      <div><NuxtLink class="line-heigh-24 footer-grey-link" to="/documents">Документы</NuxtLink></div>
+      <div><NuxtLink class="line-heigh-24 footer-grey-link" to="/about-us">О компании</NuxtLink></div>
     </q-footer>
   </q-layout>
 </template>
 <style lang="scss">
 .q-header {
   height: 64px;
+  position: static;
 }
 .q-toolbar__title-header {
+
   font-family: "Noto Serif";
   font-weight: 600;
   font-size: 28px;
@@ -99,6 +100,7 @@ const toggleRightDrawer = () => {
   flex: none;
   padding: 10px 25px 10px 8px;
 }
+
 
 .btn-all-category {
   width: 167px;
@@ -137,15 +139,29 @@ const toggleRightDrawer = () => {
   height: 40px;
   width: 40px;
 }
-.footer-style{
-  height: 88px;
-  background-color: $grey-2;
-  padding: 24px 32px 40px;
+.drawer-btn{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
-.footer-style .q-toolbar__title{
-  font-size: 15px;
-  line-height: 24px;
-  font-weight: 500;
+.footer-style{
+  background-color: $grey-2;
+  padding: 24px 32px 40px !important;
+  height: 88px !important;
+  width: 100%;
+  position: static !important;
+  bottom: 0;
+}
+// .footer-style .q-toolbar__title{
+//   font-size: 15px;
+//   line-height: 24px;
+//   font-weight: 500;
+// }
+.footer-grey-link{
+  color: $grey-3;
+  margin-right: 20px
+}
+.footer-main-link{
+  margin-right: 20px
 }
 
 </style>

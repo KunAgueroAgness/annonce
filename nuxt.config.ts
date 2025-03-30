@@ -27,7 +27,8 @@ export default defineNuxtConfig({
       fontIcons: [
         "eva-icons",
         "material-icons",
-        "mdi-v7"
+        "mdi-v7",
+        "mdi-v6"
       ],
     },
     components: {
