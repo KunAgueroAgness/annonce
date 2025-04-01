@@ -12,9 +12,6 @@ The project uses the following technologies and tools:
 - **Quasar** — UI library with ready-made components.
 - **JWT (JSON Web Token)** — for user authentication.
 - **@nuxtjs/device** — module for determining the device type.
-- **@nuxtjs/axios** — HTTP client for working with API.
-- **ESLint** — for code quality checking.
-- **Prettier** — for automatic code formatting.
 - **Git** — for version control.
 
 ## Setup
@@ -62,31 +59,71 @@ npm install @nuxtjs/device
 or
 npx nuxi@latest module add device
 ```
-## npm install -D sass-embedded
-# npm install -D sass-embedded
+##  Sass is the most mature, stable, and powerful professional grade CSS extension language in the world.
+```bash
+# npm
+npm i sass
+```
 
+## JavaScript module for JSON Object Signing and Encryption
+
+```bash
+# npm
+npm i jose
+
+```
 
 ## Configure nuxt.config.ts
 - Update your nuxt.config.ts file with the following configuration:
 
 ```
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/device', 'nuxt-quasar-ui'],
+  compatibilityDate: "2025-03-16",
+  ssr: true,  
+  experimental: {
+    payloadExtraction: false
+  },
+  modules: ["@nuxtjs/device", "nuxt-quasar-ui"],
+  app:{
+    head: {
+      link: [
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600&display=auto',
+        },
+      ],
+    },
+  },
   quasar: {
-    // Configurable Component Defaults
+    plugins: [
+      "BottomSheet",
+      "Dialog",
+      "Loading",
+      "LoadingBar",
+      "Notify",
+      "Dark",
+    ],
+    sassVariables: '@/assets/style/quasar/variables.scss' ,
+    extras: {
+      fontIcons: [
+        "eva-icons",
+        "material-icons",
+        "mdi-v7",
+        "mdi-v6",
+        "bootstrap-icons"
+      ],
+    },
     components: {
       defaults: {
         QBtn: {
-          dense: true,
-          flat: true,
+          unelevated: true,
         },
-        QInput: {
-          dense: true
-        }
-      }
-    }
-  }
+      },
+    },
+  },
 });
+
+
 ```
 
 # Running the Project

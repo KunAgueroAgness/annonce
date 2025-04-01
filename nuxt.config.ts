@@ -1,6 +1,9 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-03-16",
-
+  ssr: true,  
+  experimental: {
+    payloadExtraction: false
+  },
   modules: ["@nuxtjs/device", "nuxt-quasar-ui"],
   app:{
     head: {
@@ -23,7 +26,6 @@ export default defineNuxtConfig({
     ],
     sassVariables: '@/assets/style/quasar/variables.scss' ,
     extras: {
-      font: "roboto-font",
       fontIcons: [
         "eva-icons",
         "material-icons",
@@ -37,12 +39,8 @@ export default defineNuxtConfig({
         QBtn: {
           unelevated: true,
         },
-        
       },
-      // sassVariables:[]
     },
-
   },
-
 });
 

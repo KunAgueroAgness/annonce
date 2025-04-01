@@ -1,5 +1,10 @@
-
 <script setup>
+const { data } = await useFetch('/api/auth.check')
+
+if (!data.value?.valid) {
+  navigateTo('/login')
+}
+
 const selectedCity = useState('selectedCity');
 const { data: companyData } = await useFetch('/api/company');
 const { data: reviewsData } = await useFetch('/api/reviews');

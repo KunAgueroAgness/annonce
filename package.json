@@ -12,6 +12,9 @@
   "dependencies": {
     "@nuxtjs/device": "^3.2.4",
     "@quasar/extras": "^1.16.17",
+    "cookie": "^1.0.2",
+    "jose": "^6.0.10",
+    "jsonwebtoken": "^9.0.2",
     "nuxt": "^3.16.0",
     "nuxt-quasar-ui": "^2.1.12",
     "quasar": "^2.18.1",
