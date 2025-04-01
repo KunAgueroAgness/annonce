@@ -7,9 +7,6 @@ const { data: productsData } = await useFetch('/api/products');
 const { data: specialistsData } = await useFetch('/api/agents');
 
 
-
-const { isMobile, isDesktop } = useDevice()
-
 const getSpecialists = (cityKey) => {
   specialists.value = specialistsData.value[cityKey.value].agents
 }
@@ -34,8 +31,8 @@ const companyName = ref(null)
 const companyVerified = ref(null)
 const companyLogoSrc = ref(null)
 const emptyCityValue = ref(false)
-const companyAdress = ref(null)
-const companyAdressUrl = ref(null)
+const companyAddress = ref(null)
+const companyAddressUrl = ref(null)
 const companyMap = ref(null)
 
 const updateCityData = (cityKey) => {
@@ -44,8 +41,8 @@ const updateCityData = (cityKey) => {
     companyVerified.value = currentCompany.value.verified
     companyLogoSrc.value = currentCompany.value.logo
     emptyCityValue.value = false
-    companyAdress.value = currentCompany.value.adress
-    companyAdressUrl.value = currentCompany.value.adressUrl
+    companyAddress.value = currentCompany.value.adress
+    companyAddressUrl.value = currentCompany.value.adressUrl
     companyMap.value = currentCompany.value.map
 }
 
@@ -150,6 +147,12 @@ const updateProductsArrays = () => {
 
 const selectOptions = computed(() => [
   {
+    label: 'Все товары и услуги',
+    value: 'all',
+    header: true,
+    list: currentProducts.value
+  },
+  {
     label: 'Автомобили',
     value: 'cars',
     header: true,
@@ -212,10 +215,11 @@ const tab = ref('products')
     <h2>По выбранному городу пока нет данных</h2>
     <h3>Выберите другой город</h3>
   </div>
+  
   <div v-else class="d-flex align-center flex-colum">
     <div v-if="!$device.isMobile" class="products--top d-flex align-center flex-colum justify-between">
       <div class="company-logo ">
-        <img :draggable="false" :src="companyLogoSrc" alt="Логотип организации">
+        <img :draggable="false" :src="companyLogoSrc" alt="'Логотип организации'">
       </div>
       <span class="card-title margin-bottom-12">{{ companyName }}</span>
       <div class="company-main-info d-flex align-center justyfy-center justify-between">
@@ -236,14 +240,14 @@ const tab = ref('products')
     </div>
         <q-tabs
           v-model="tab"
-          class="products-tabs"
+          :class="$device.isMobile ? 'products-tabs-mobile' : 'products-tabs'"
           align="justify"
           narrow-indicator
           active-class="active-product-tab"
         >
-          <q-tab class="product-tab" name="products" :ripple="false" color="grey-2"  label="Товары и услуги" noCaps>
+          <q-tab class="product-tab" name="products" :ripple="false" color="grey-2" :label="`Товары и услуги ${$device.isMobile ? currentProducts.length : ''}`" noCaps>
           </q-tab>
-          <q-tab class="product-tab" name="agents" :ripple="false" color="grey-2" label="Агенты" noCaps>
+          <q-tab class="product-tab" name="agents" :ripple="false" color="grey-2" :label="`Агенты ${$device.isMobile ? specialists.length : ''}`" noCaps>
           </q-tab>
           <q-tab class="product-tab" name="about" :ripple="false" color="grey-2"  label="О компании" noCaps>
           </q-tab>
@@ -251,8 +255,8 @@ const tab = ref('products')
         <q-separator color="black"/>
         <q-tab-panels class="product-q-tab-panels" v-model="tab" animated>
 
-          <q-tab-panel  name="products">
-            <div class="d-flex width-100 justyfy-center">
+          <q-tab-panel   name="products">
+            <div class="d-flex width-100 justify-center">
               <div class="filter-container">
                 <q-select
                   borderless 
@@ -279,7 +283,7 @@ const tab = ref('products')
                   />
               </div>
             </div>
-            <div class="products-list" >
+            <div :class="[$device.isMobile ? 'products-list-mobile' : 'products-list']">
               <div v-for="product in filteredProducts" :key="product.name">
                 <q-card 
                   :bordered="false"
@@ -287,7 +291,7 @@ const tab = ref('products')
                   class="q-pa-md-sm product-item"
                   :square="false"
                 >
-                  <div class="product-image-badges fixed-top-left absolute-top-left q-pl-sm q-pt-sm">
+                  <div v-if="product.isAvailable" class="product-image-badges fixed-top-left absolute-top-left q-pl-sm q-pt-sm">
                     <q-badge
                       color="black"
                       reverse
@@ -295,12 +299,12 @@ const tab = ref('products')
                       text-color="grey-0"
                       class="q-py-xs q-px-sm q-mr-xs"
                     >
-                    <q-icon
-                      name="mdi-eye"
-                      color="grey-0"
-                      class="q-mr-sm"
-                      size="sm"
-                    />
+                      <q-icon
+                        name="mdi-eye"
+                        color="grey-0"
+                        class="q-mr-sm"
+                        size="sm"
+                      />
                     {{ product.views }}
                     </q-badge>
                     <q-badge
@@ -309,14 +313,14 @@ const tab = ref('products')
                       text-color="grey-0"
                       class="q-py-xs q-px-sm "
                     >
-                    <q-icon
-                      name="mdi-calendar-blank"
-                      color="grey-0"
-                      class="q-mr-sm"
-                      size="sm"
-                    />
+                      <q-icon
+                        name="mdi-calendar-blank"
+                        color="grey-0"
+                        class="q-mr-sm"
+                        size="sm"
+                      />
                     {{ product.daysSincePublished }}
-                  </q-badge>
+                    </q-badge>
                   </div>
                   <img  :draggable="false" class="product-image" :src="product.image" :alt="product.name">
                   <q-card-section>
@@ -336,10 +340,10 @@ const tab = ref('products')
                         @click="promoteAdFunc(product)"
                       />
                     </div>
-                    <div v-else-if="!product.isAvailable && product.isPromoted" class="product-promoted d-flex align-center justyfy-center">
+                    <div v-else-if="!product.isAvailable && product.isPromoted" class="product-promoted d-flex align-center justify-center">
                       <p class="text-weight-regular product-promoted-success">Объявление продвигается</p>
                     </div>
-                    <div v-else-if="!product.isAvailable && !product.isPromoted" class="d-flex align-center justyfy-center">
+                    <div v-else-if="!product.isAvailable && !product.isPromoted" class="d-flex align-center justify-center">
                       <p class="text-weight-regular product-hided">Обьявление скрыто</p>
                     </div>
                   </q-card-section>
@@ -347,9 +351,9 @@ const tab = ref('products')
               </div>
             </div>
           </q-tab-panel>
-          <q-tab-panel name="agents">
+          <q-tab-panel name="agents" :class="$device.isMobile ? 'mobil-tab-panel' : ''">
             <div class="d-flex align-center flex-colum ">
-              <div class="container">
+              <div :class="$device.isMobile ? 'container-mobile' : 'container'">
                 
                 <q-card
                 class="d-flex align-center padding-20 agents-card margin-bottom-12"
@@ -366,10 +370,10 @@ const tab = ref('products')
                   <div class="d-flex align-center margin-bottom-12">
                     <span class="d-flex align-center q-mr-xs line-heigh-20r">
                       <q-icon v-if="true" class="q-mr-xs line-heigh-20" color="green" name="mdi-check-decagram" />
-                    Документы проверены
+                    {{ $device.isMobile ? 'Проверен' : 'Документы проверены'}}
                     </span>
                     <span class="d-flex align-center q-mr-xs line-heigh-20" v-if="specialist.rating"> •  <q-icon class="q-mr-xs" color="green" name="mdi-star" />{{ changeRatingNumber }}</span>
-                    <span class="d-flex align-center line-heigh-20" > • {{ false ? `${specialist.reviewsAmount} отзывов` : "Нет отзывов" }}</span>
+                    <span class="d-flex align-center line-heigh-20" >{{ false ? ` • ${specialist.reviewsAmount} отзывов` : "" }}</span>
                   </div>
                     <div class="specialist-text-block text-black">
                       <p class="specialist-text line-heigh-24 q-panel">
@@ -383,12 +387,12 @@ const tab = ref('products')
           </q-tab-panel>
           <q-tab-panel name="about">
             <div class="d-flex align-center flex-colum">
-              <div v-if="$device.isMobile" class="products--top d-flex align-center flex-colum justify-between">
-                <div class="company-logo ">
+              <div v-if="$device.isMobile" class="d-flex align-center flex-colum justify-between">
+                <div class="company-logo-mobile">
                   <img :draggable="false" :src="companyLogoSrc" alt="Логотип организации">
                 </div>
                 <span class="card-title margin-bottom-12">{{ companyName }}</span>
-                <div class="company-main-info d-flex align-center justyfy-center justify-between">
+                <div class=" d-flex align-center justify-center justify-between">
                   <span class="font16">
                     <q-icon class="q-mr-xs" :color="companyVerified ? 'green' : 'red'"
                       :name="companyVerified ? 'mdi-check-decagram' : 'mdi-alert-decagram'" 
@@ -399,12 +403,8 @@ const tab = ref('products')
                   <span class="font16"> • </span>
                   <span class="font16">{{ companyReview }} отзывов</span>
                 </div>
-                <q-btn class="check-number" :loading="numberLoading" @click="getPhoneNumber()"
-                  :color="numberCheckBtnColor" 
-                  :text-color="numberCheckTextColor"
-                  :label="phoneNumberBtnVal"/>
               </div>
-              <div class="container d-flex align-center flex-colum">
+              <div class="d-flex align-center flex-colum" :class="$device.isMobile ? '' : 'container'">
                 <q-card
                 :bordered="false"
                 :flat="true"
@@ -425,16 +425,29 @@ const tab = ref('products')
                     class="about-company-select margin-bottom-12 padding-20"
                   />
                   <q-card-section
+                      v-if="!$device.isMobile"
                   class="about-company-bottom d-flex align-center justify-between"
                   >
                   <div class="d-flex flex-colum padding-20 padding-r-20">
                     <span class="card-title q-mb-sm">Местоположение</span>
-                    <div class="about-company-text text-green"> <NuxtLink :to="companyAdressUrl" class="">{{ companyAdress }}</NuxtLink></div>
+                    <div class="about-company-text text-green"> <NuxtLink :to="companyAddressUrl" class="">{{ companyAddress }}</NuxtLink></div>
                   </div>
-                  <div class="map-bg d-flex align-center justyfy-center">
+                  <div class="map-bg d-flex align-center justify-center">
                     <q-icon name="place" color="green" class="map-place-icon"/>
-                    
                   </div>
+                  </q-card-section>
+                  <q-card-section
+                      v-if="$device.isMobile"
+                      class="about-company-bottom-mobile d-flex align-center flex-colum justify-center"
+                  >
+                    <div class="mobile-map-bg d-flex align-center justify-center">
+                      <q-icon name="place" color="green" class="map-place-icon"/>
+                    </div>
+                    <div class="d-flex flex-colum padding-20 padding-r-20">
+                      <span class="card-title q-mb-sm">Местоположение</span>
+                      <div class="about-company-text text-green"> <NuxtLink :to="companyAddressUrl" class="">{{ companyAddress }}</NuxtLink></div>
+                    </div>
+
                   </q-card-section>
                 </q-card>
               </div>
@@ -454,6 +467,15 @@ const tab = ref('products')
   height: 120px;
   margin-bottom: 24px;
 
+}
+.company-logo-mobile{
+  width: 120px;
+  height: 120px;
+  margin-bottom: 24px;
+}
+.company-logo-mobile img{
+  width: 120px;
+  height: 120px;
 }
 
 .company-logo img {
@@ -478,12 +500,22 @@ const tab = ref('products')
   padding: 20px 32px !important;
   margin-bottom: 32px;
 }
-.products-tabs{
-  margin-bottom: 100px;
-}
+.products-tabs-mobile{
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
 
+}
+.products-tabs{
+  margin-bottom: 32px;
+}
 .product-tab{
   min-height: 40px !important;
+  font-size: 15px;
+}
+.product-tab .q-tab__label{
+  font-size: 15px;
+  line-height: 24px;
 }
 .product-tab{
   border-radius: 12px;
@@ -510,12 +542,18 @@ const tab = ref('products')
   grid-column-gap: 8px;
   grid-row-gap: 8px;
 }
-
+.products-list-mobile{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
 .product-image{
   border-radius: 20px !important;
 }
 .ad-control{
   border-top: 1px solid $grey-3;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 .product-price{
   align-items: flex-start;
@@ -530,6 +568,7 @@ const tab = ref('products')
 .product-hided{
   color: $red;
   line-height: 20px;
+  margin-top: 14px;
 }
 .promoted-text{
   font-size: 13px;
@@ -608,12 +647,25 @@ const tab = ref('products')
   width: 200px;
   height: 132px;
 }
+.mobile-map-bg{
+  background-image: url('/images/rostovNaDonu/naslediy/map.png');
+  border-radius:20px 20px 0 0;
+  width: 100%;
+  height: 96px;
+
+}
 .map-place-icon{
   font-size: 56px;
 }
 .filter-container{
   width: 470px;
   padding: 16px;
+}
+.mobil-tab-panel{
+ padding: 24px 16px;
+}
+.container-mobile{
+width: 100vw;
 }
 
 .filter-container .q-field__control{

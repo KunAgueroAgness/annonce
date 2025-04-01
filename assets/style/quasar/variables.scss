@@ -85,7 +85,7 @@ body{
 .align-center{
   align-items: center;
 }
-.justyfy-center{
+.justify-center{
 justify-content: center;
 }
 .justify-between{
@@ -93,6 +93,9 @@ justify-content: center;
 }
 .flex-colum{
   flex-direction: column;
+}
+.flex-row{
+  flex-direction: row;
 }
 .q-c-toolbar__title{
 display: flex !important;

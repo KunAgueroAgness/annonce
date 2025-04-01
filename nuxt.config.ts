@@ -28,7 +28,8 @@ export default defineNuxtConfig({
         "eva-icons",
         "material-icons",
         "mdi-v7",
-        "mdi-v6"
+        "mdi-v6",
+        "bootstrap-icons"
       ],
     },
     components: {
